@@ -44,5 +44,40 @@ class LoginController extends GetxController{
       return false;
     }
   }
+
+
+
+
+  Future<bool> idLogin(String id) async {
+    inProgress =true;
+    update();
+
+    Map<String,dynamic> inputParams ={
+      "recruiter_id":id,
+    };
+    try{
+
+      final NetworkResponse response = await NetworkCaller().postRequest(Urls.idLogin,body: inputParams);
+      if(response.isSuccess){
+
+        String token = response.responseData["token"];
+        await AuthController().saveUserInformation(token, userModel);
+
+        inProgress= false;
+        update();
+        return true;
+      }else{
+        Get.snackbar('Failed',response.msg,backgroundColor: Colors.red,colorText: Colors.white);
+        inProgress= false;
+        update();
+        return false;
+      }
+    }catch(e){
+      Get.snackbar('Something went wrong!',"Try again....",backgroundColor: Colors.red,colorText: Colors.white);
+      inProgress = false;
+      update();
+      return false;
+    }
+  }
   
 }
