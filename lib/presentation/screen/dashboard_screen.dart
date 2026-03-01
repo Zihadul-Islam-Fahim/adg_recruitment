@@ -1,4 +1,5 @@
 import 'package:adg_recruitment/presentation/screen/apply_screen.dart';
+import 'package:adg_recruitment/presentation/screen/candidate_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -17,11 +18,8 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('My Applications'),
         actions: [
-          IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: CircleAvatar(child: Icon(Icons.person)),
-          )
+          IconButton(icon: Icon(Icons.person), onPressed: () {Get.to(()=> CandidateProfileEditScreen());}),
+          
         ],
       ),
       floatingActionButton: FloatingActionButton(

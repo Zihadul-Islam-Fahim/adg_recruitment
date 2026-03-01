@@ -1,4 +1,5 @@
 import 'package:adg_recruitment/presentation/controller/auth_controller.dart';
+import 'package:adg_recruitment/presentation/controller/candidate_profile_controller.dart';
 import 'package:adg_recruitment/presentation/controller/login_controller.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +10,7 @@ class ControllerBinder extends Bindings {
 
     Get.put(AuthController());
     Get.put(LoginController());
+    Get.put(CandidateProfileController());
 
 
   }

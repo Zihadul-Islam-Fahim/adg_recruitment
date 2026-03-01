@@ -28,9 +28,11 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.indigo,
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: AppBarThemeData(backgroundColor: Colors.white),
+        elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo)),
         inputDecorationTheme: InputDecorationTheme(
 
           // ---------- TEXT STYLE ----------
+
           labelStyle: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -100,6 +102,7 @@ class MyApp extends StatelessWidget {
           // ---------- FILL ----------
           filled: true,
           fillColor: const Color(0xFFF8FAFC),
+
 
           // ---------- ICONS ----------
           prefixIconColor: Color(0xFF64748B),
