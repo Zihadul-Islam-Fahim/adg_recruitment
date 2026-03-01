@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../data/models/applicationStatusModel.dart';
 import '../../data/models/job_application_model.dart';
 import '../../data/utils/statuls_to_label.dart';
 import '../screen/application_details_screen.dart';
@@ -12,11 +13,11 @@ class ApplicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final applied = DateFormat.yMMMd().format(application.appliedAt);
+    final applied = DateFormat.yMMMd().format(DateTime.parse(application.createdAt ?? "") );
 
     return InkWell(
       borderRadius: BorderRadius.circular(14),
-      onTap: () => Get.toNamed('/detail/${application.id}'),
+      onTap: () => Get.to(()=> ApplicationDetailScreen(jobApplication: application)),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
         padding: const EdgeInsets.all(14),
@@ -41,14 +42,14 @@ class ApplicationCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    application.title,
+                    application.job?.jobTitle ?? "",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-                _StatusBadge(status: application.status),
+                _StatusBadge(status: labelToStatus(application.applicationStatus!)!),
               ],
             ),
 
@@ -56,7 +57,7 @@ class ApplicationCard extends StatelessWidget {
 
             /// COMPANY
             Text(
-              application.company,
+              application.job?.companyId ?? "",
               style: TextStyle(
                 color: Colors.grey.shade700,
                 fontSize: 14,
@@ -78,8 +79,7 @@ class ApplicationCard extends StatelessWidget {
             ),
 
             /// INTERVIEW INFO
-            if (application.status == ApplicationStatus.interviewInvited &&
-                application.interviewAt != null) ...[
+            if (application.applicationStatus == 'interview_invited' ) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(10),
@@ -93,7 +93,7 @@ class ApplicationCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "Interview: ${DateFormat.yMMMd().add_jm().format(application.interviewAt!)}",
+                        "Interview: ${DateFormat.yMMMd().add_jm().format(DateTime.parse(application.interviewDate!))}",
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -118,36 +118,28 @@ class _StatusBadge extends StatelessWidget {
     Color text;
 
     switch (status) {
-      case ApplicationStatus.resumeReceived:
-      case ApplicationStatus.underReview:
+      case ApplicationStatus.applied:
+      case ApplicationStatus.under_review:
         bg = Colors.blue.shade50;
         text = Colors.blue.shade700;
         break;
 
-      case ApplicationStatus.sentToClient:
+      case ApplicationStatus.sent_to_company:
         bg = Colors.purple.shade50;
         text = Colors.purple.shade700;
         break;
 
-      case ApplicationStatus.interviewInvited:
+      case ApplicationStatus.interview_invited:
         bg = Colors.orange.shade50;
         text = Colors.orange.shade800;
         break;
 
-      case ApplicationStatus.interviewDone:
+      case ApplicationStatus.interview_completed:
         bg = Colors.teal.shade50;
         text = Colors.teal.shade700;
         break;
 
-      case ApplicationStatus.offer:
-        bg = Colors.green.shade50;
-        text = Colors.green.shade700;
-        break;
 
-      case ApplicationStatus.rejection:
-        bg = Colors.red.shade50;
-        text = Colors.red.shade700;
-        break;
     }
 
     return Container(
@@ -171,28 +163,22 @@ class _StatusBadge extends StatelessWidget {
 
   IconData _statusIcon(ApplicationStatus s) {
     switch (s) {
-      case ApplicationStatus.resumeReceived:
-      case ApplicationStatus.underReview:
+      case ApplicationStatus.applied:
+      case ApplicationStatus.under_review:
         return Icons.receipt_long;
-      case ApplicationStatus.sentToClient:
+      case ApplicationStatus.sent_to_company:
         return Icons.send;
-      case ApplicationStatus.interviewInvited:
-      case ApplicationStatus.interviewDone:
+      case ApplicationStatus.interview_invited:
+      case ApplicationStatus.interview_completed:
         return Icons.event;
-      case ApplicationStatus.offer:
-        return Icons.thumb_up;
-      case ApplicationStatus.rejection:
-        return Icons.close;
+
     }
   }
 
   Color _statusColor(ApplicationStatus s) {
     switch (s) {
-      case ApplicationStatus.offer:
-        return Colors.green;
-      case ApplicationStatus.rejection:
-        return Colors.red;
-      case ApplicationStatus.interviewInvited:
+
+      case ApplicationStatus.interview_invited:
         return Colors.orange;
       default:
         return Colors.blue;
@@ -201,19 +187,16 @@ class _StatusBadge extends StatelessWidget {
 
   String _statusShort(ApplicationStatus s) {
     switch (s) {
-      case ApplicationStatus.resumeReceived:
+      case ApplicationStatus.applied:
         return 'Received';
-      case ApplicationStatus.underReview:
+      case ApplicationStatus.under_review:
         return 'Review';
-      case ApplicationStatus.sentToClient:
+      case ApplicationStatus.sent_to_company:
         return 'Sent';
-      case ApplicationStatus.interviewInvited:
+      case ApplicationStatus.interview_invited:
         return 'Invite';
-      case ApplicationStatus.interviewDone:
+      case ApplicationStatus.interview_completed:
         return 'Done';
-      case ApplicationStatus.offer:
-        return 'Offer';
-      case ApplicationStatus.rejection:
-        return 'Rejected';
+
     }
   }

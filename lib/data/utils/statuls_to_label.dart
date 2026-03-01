@@ -1,20 +1,35 @@
+import '../models/applicationStatusModel.dart';
 import '../models/job_application_model.dart';
 
 String statusToLabel(ApplicationStatus s) {
   switch (s) {
-    case ApplicationStatus.resumeReceived:
+    case ApplicationStatus.applied:
       return 'Resume received';
-    case ApplicationStatus.underReview:
+    case ApplicationStatus.under_review:
       return 'Under review';
-    case ApplicationStatus.sentToClient:
+    case ApplicationStatus.sent_to_company:
       return 'Sent to client';
-    case ApplicationStatus.interviewInvited:
+    case ApplicationStatus.interview_invited:
       return 'Interview invited';
-    case ApplicationStatus.interviewDone:
+    case ApplicationStatus.interview_completed:
       return 'Interview completed';
-    case ApplicationStatus.offer:
-      return 'Offer';
-    case ApplicationStatus.rejection:
-      return 'Rejection';
+
   }
+}
+
+ApplicationStatus? labelToStatus(String label){
+  switch (label) {
+    case "applied":
+      return ApplicationStatus.applied;
+    case  'under_review' :
+      return ApplicationStatus.under_review;
+    case "sent_to_company":
+      return ApplicationStatus.sent_to_company;
+    case "interview_invited":
+      return ApplicationStatus.interview_invited;
+    case "interview_completed":
+      return ApplicationStatus.interview_completed;
+
+  }
+  return null;
 }

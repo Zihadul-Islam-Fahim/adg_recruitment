@@ -6,6 +6,7 @@ class Urls{
   static String getJobs = "$_bseUrl/api/candidate/applications";
   static String postProfile = "$_bseUrl/api/candidate/profile";
   static String getProfile = "$_bseUrl/api/candidate/profile";
+  static String deleteUser = "$_bseUrl/api/auth/delete/account";
 
 
 

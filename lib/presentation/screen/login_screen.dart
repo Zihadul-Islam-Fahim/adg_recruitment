@@ -15,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Candidate Login (GetX)')),
+      appBar: AppBar(title: const Text('Candidate Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GetBuilder<LoginController>(
@@ -75,8 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                   }, child: loginController.inProgress ? CircularProgressIndicator(color: Colors.white,) : Text('Login',style: TextStyle(color: Colors.white),)),
                 ],
-                Spacer(),
-                Text('Demo: tap login to continue', style: TextStyle(color: Colors.grey)),
+
               ],
             );
           }

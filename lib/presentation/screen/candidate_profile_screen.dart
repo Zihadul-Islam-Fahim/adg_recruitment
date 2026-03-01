@@ -73,7 +73,7 @@ class _CandidateProfileEditScreenState extends State<CandidateProfileEditScreen>
 
                     const SizedBox(height: 20),
 
-                    // _sectionTitle("Cover Letter"),
+                    _sectionTitle("Cover Letter"),
 
                     _field("Cover Letter", c.coverLetter, maxLines: 5),
 
@@ -82,21 +82,31 @@ class _CandidateProfileEditScreenState extends State<CandidateProfileEditScreen>
                     const SizedBox(height: 12),
                     Row(children: [
 
-                      const SizedBox(width: 12),
-                      if (c.hasFile) Text(c.fileName, style: const TextStyle(color: Colors.grey)),
+                      const SizedBox(width: 9),
+                      if (c.hasFile) SizedBox(
+                          width: Get.width * 0.9,
+                          child: Text(c.fileName,overflow: TextOverflow.fade, style: const TextStyle(color: Colors.grey))),
                     ]),
 
                     const SizedBox(height: 30),
 
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: c.saveProfile,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Visibility(
+                        visible: c.buttonInProgress==false,
+                        replacement: Center(child: CircularProgressIndicator(),),
+                        child: ElevatedButton(
+                          onPressed: (){
+                            if(c.formKey.currentState!.validate()){
+                              c.saveProfile();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text("Update Profile", style: TextStyle(fontSize: 16,color: Colors.white)),
                         ),
-                        child: const Text("Save Profile", style: TextStyle(fontSize: 16,color: Colors.white)),
                       ),
                     ),
 

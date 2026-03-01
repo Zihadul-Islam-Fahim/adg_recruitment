@@ -1,14 +1,17 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:adg_recruitment/data/models/candidateProfileModel.dart';
 import 'package:adg_recruitment/data/models/network_response.dart';
 import 'package:adg_recruitment/data/services/network_caller.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/utils/urls.dart';
+import 'auth_controller.dart';
 
 class CandidateProfileController extends GetxController {
 
@@ -31,6 +34,7 @@ class CandidateProfileController extends GetxController {
   ];
 
   bool inProgress = false;
+  bool buttonInProgress = false;
   bool hasFile = false;
   File? file;
   String fileName = "";
@@ -79,31 +83,83 @@ class CandidateProfileController extends GetxController {
       update();
     }
 
-
-
-
-    //
+    inProgress= false;
     update();
   }
 
-  void saveProfile() {
-    if (!formKey.currentState!.validate()) return;
 
-    final body = {
-      "headline": headline.text,
-      "expected_salary_min": salaryMin.text,
-      "expected_salary_max": salaryMax.text,
 
-      "preferred_location": location.text,
-      "total_experience_years": experience.text,
-      "availability_weeks": availability.text,
-      "cover_letter": coverLetter.text,
-    };
 
-    print(body);
+  Future<bool> saveProfile()async{
 
-    Get.snackbar("Saved", "Profile updated successfully");
+    try{
+      buttonInProgress = true;
+      update();
+
+      var uri = Uri.parse(Urls.postProfile);
+      log(Urls.postProfile);
+      var request = http.MultipartRequest('POST', uri);
+
+      final token = AuthController.token;
+      request.headers.addAll({
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      });
+
+      // Attach fields
+      request.fields['headline'] = headline.text;
+      request.fields['expected_salary_min'] = salaryMin.text;
+      request.fields['expected_salary_max'] = salaryMax.text;
+      request.fields['preferred_job_type'] = jobType;
+      request.fields['preferred_location'] = location.text;
+      request.fields['total_experience_years'] = experience.text;
+      request.fields['availability_weeks'] = availability.text;
+      request.fields['skills[]'] = "null";
+
+
+
+      if(hasFile){
+        final cvFile = await File(file!.path).readAsBytes();
+        request.files.add(http.MultipartFile.fromBytes(
+          'cv_file',
+          cvFile,
+          filename: p.basename(file!.path),
+        ));
+      }
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        buttonInProgress = false;
+        update();
+
+        log(response.statusCode.toString());
+        log(response.body);
+        Get.snackbar('Success', "Profile Update Successful !!",
+            backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      } else {
+        log(response.statusCode.toString());
+        log(response.body);
+
+        var p = jsonDecode(response.body);
+
+
+        Get.snackbar('Something went wrong!', 'Try again',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        buttonInProgress = false;
+        update();
+
+        return false;
+      }
+    } catch (e) {
+      log(e.toString());
+      buttonInProgress = false;
+      update();
+      return false;
+    }
   }
+
 
   @override
   void onClose() {

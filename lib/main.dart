@@ -1,8 +1,11 @@
 import 'package:adg_recruitment/controller_binder.dart';
 import 'package:adg_recruitment/presentation/controller/application_controller.dart';
 import 'package:adg_recruitment/presentation/screen/application_details_screen.dart';
+import 'package:adg_recruitment/presentation/screen/candidate_profile_screen.dart';
 import 'package:adg_recruitment/presentation/screen/dashboard_screen.dart';
 import 'package:adg_recruitment/presentation/screen/login_screen.dart';
+import 'package:adg_recruitment/presentation/screen/onboard_screen.dart';
+import 'package:adg_recruitment/presentation/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -13,7 +16,7 @@ import 'data/models/job_application_model.dart';
 
 void main() {
 
-  Get.put(AppController());
+  Get.put(JobApplicationController());
   runApp(MyApp());
 }
 
@@ -118,9 +121,12 @@ class MyApp extends StatelessWidget {
       initialBinding: ControllerBinder(),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => LoginScreen()),
+        GetPage(name: '/', page: () => SplashScreen()),
+        GetPage(name: '/login', page: () => LoginScreen()),
+        GetPage(name: '/onboard', page: () => OnboardingCandidateScreen()),
         GetPage(name: '/dashboard', page: () => DashboardScreen()),
-        GetPage(name: '/detail/:id', page: () => ApplicationDetailScreen()),
+        GetPage(name: '/profile', page: () => CandidateProfileEditScreen()),
+
       ],
       debugShowCheckedModeBanner: false,
 

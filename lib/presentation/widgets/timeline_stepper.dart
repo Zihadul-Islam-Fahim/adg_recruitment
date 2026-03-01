@@ -4,24 +4,29 @@ import 'package:intl/intl.dart';
 import '../../data/models/job_application_model.dart';
 import '../../data/utils/statuls_to_label.dart';
 
+
+
+import '../../data/models/applicationStatusModel.dart';
+
+
 class TimelineStepper extends StatelessWidget {
   final JobApplication application;
   TimelineStepper({required this.application});
 
-  final steps = const [
-    ApplicationStatus.resumeReceived,
-    ApplicationStatus.underReview,
-    ApplicationStatus.sentToClient,
-    ApplicationStatus.interviewInvited,
-    ApplicationStatus.interviewDone,
+  final steps = [
+    ApplicationStatus.applied,
+    ApplicationStatus.under_review,
+    ApplicationStatus.sent_to_company,
+    ApplicationStatus.interview_invited,
+    ApplicationStatus.interview_completed,
   ];
 
   @override
   Widget build(BuildContext context) {
-    final current = application.status;
+    final current = labelToStatus(application.applicationStatus!);
     return Column(
       children: steps.map((s) {
-        final done = _isAtOrAfter(current, s);
+        final done = _isAtOrAfter(current!, s);
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -41,8 +46,8 @@ class TimelineStepper extends StatelessWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(statusToLabel(s), style: TextStyle(fontWeight: FontWeight.w600)),
                   SizedBox(height: 4),
-                  if (s == ApplicationStatus.interviewInvited && application.interviewAt != null)
-                    Text('Interview: ${DateFormat.yMMMd().add_jm().format(application.interviewAt!)}', style: TextStyle(color: Colors.grey[700])),
+                  if (s == ApplicationStatus.interview_invited && application.interviewDate != null)
+                    Text('Interview: ${DateFormat.yMMMd().add_jm().format(DateTime.parse(application.interviewDate!))}', style: TextStyle(color: Colors.grey[700])),
                 ]),
               ),
             ),
@@ -55,20 +60,17 @@ class TimelineStepper extends StatelessWidget {
   bool _isAtOrAfter(ApplicationStatus cur, ApplicationStatus s) {
     int idx(ApplicationStatus st) {
       switch (st) {
-        case ApplicationStatus.resumeReceived:
+        case ApplicationStatus.applied:
           return 0;
-        case ApplicationStatus.underReview:
+        case ApplicationStatus.under_review:
           return 1;
-        case ApplicationStatus.sentToClient:
+        case ApplicationStatus.sent_to_company:
           return 2;
-        case ApplicationStatus.interviewInvited:
+        case ApplicationStatus.interview_invited:
           return 3;
-        case ApplicationStatus.interviewDone:
+        case ApplicationStatus.interview_completed:
           return 4;
-        case ApplicationStatus.offer:
-          return 5;
-        case ApplicationStatus.rejection:
-          return 6;
+
       }
     }
 

@@ -1,50 +1,44 @@
+import 'package:adg_recruitment/data/models/job_application_model.dart';
+import 'package:adg_recruitment/data/models/network_response.dart';
+import 'package:adg_recruitment/data/services/network_caller.dart';
+import 'package:adg_recruitment/data/utils/urls.dart';
 import 'package:get/get.dart';
 
-import '../../data/models/job_application_model.dart';
-class AppController extends GetxController {
-  // simple in-memory list (replace with API calls)
-  List<JobApplication> apps = [
-    JobApplication(
-      id: 'a1',
-      title: 'Software Engineer',
-      company: 'ABC Tech',
-      appliedAt: DateTime.now().subtract(Duration(days: 10)),
-      status: ApplicationStatus.sentToClient,
-    ),
-    JobApplication(
-      id: 'a2',
-      title: 'Product Manager',
-      company: 'Global Inc.',
-      appliedAt: DateTime.now().subtract(Duration(days: 3)),
-      status: ApplicationStatus.interviewInvited,
-      interviewAt: DateTime.now().add(Duration(days: 2, hours: 14)),
-    ),
-    JobApplication(
-      id: 'a3',
-      title: 'Data Analyst',
-      company: 'Insights LLC',
-      appliedAt: DateTime.now().subtract(Duration(days: 1)),
-      status: ApplicationStatus.underReview,
-    ),
-  ];
+import '../../data/models/applicationStatusModel.dart';
 
-  // update status and call update() so GetBuilder rebuilds widgets that listen
-  void updateStatus(String id, ApplicationStatus newStatus) {
-    final idx = apps.indexWhere((a) => a.id == id);
-    if (idx >= 0) {
-      apps[idx].status = newStatus;
-      update(); // <-- GetBuilder will react
+
+class JobApplicationController extends GetxController {
+
+  bool inProgress = false;
+  JobApplicationModel? jobApplicationModel;
+
+  Future<void> getJobs()async{
+    inProgress = true;
+    update();
+
+    NetworkResponse response = await NetworkCaller().getRequest(Urls.getJobs);
+    if(response.isSuccess){
+      jobApplicationModel = JobApplicationModel.fromJson(response.responseData);
+
+      inProgress = false;
+      update();
     }
+    inProgress = false;
+    update();
   }
 
-  JobApplication? findById(String id) => FirstWhereExt(apps).firstWhereOrNull((a) => a.id == id);
+
+
+
+
+  JobApplication? findById(String id) => FirstWhereExt(jobApplicationModel!.jobApplicationList!).firstWhereOrNull((a) => a.id == id);
 
   // helper to simulate scheduling an interview
   void scheduleInterview(String id, DateTime dateTime) {
-    final idx = apps.indexWhere((a) => a.id == id);
+    final idx = jobApplicationModel!.jobApplicationList!.indexWhere((a) => a.id == id);
     if (idx >= 0) {
-      apps[idx].status = ApplicationStatus.interviewInvited;
-      apps[idx].interviewAt = dateTime;
+      jobApplicationModel!.jobApplicationList![idx].applicationStatus = ApplicationStatus.interview_invited.toString();
+      jobApplicationModel!.jobApplicationList![idx].interviewDate = dateTime.toString();
       update();
     }
   }
